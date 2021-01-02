@@ -14,6 +14,7 @@ char *password = "jaSamKnjiznicar123"; /* set me first */
 char *database = "knjiznica";
 int day, month, year;
 char *status;
+int temp;
 
 void greska(MYSQL *conn) {
     if(mysql_errno(conn) == 1644) {
@@ -144,7 +145,7 @@ void vracanje() {
 
 void dodajKnjigu() {
     char zahtjev[1000];
-    unsigned long long int isbn;
+    char isbn[20];
     char naslov[100];
     int godina;
     int brojStranica;
@@ -157,7 +158,7 @@ void dodajKnjigu() {
     int i=0;
 
     printf("Unesite ISBN knjige\n");
-    scanf("%lld", &isbn);
+    scanf("%s", isbn);
     printf("Unesite naslov\n");
     scanf("%s", naslov);
     printf("Unesite ime autora\n");
@@ -205,7 +206,7 @@ void dodajKnjigu() {
 
     res = mysql_use_result(conn);
     printf("Postojeći izdavaci: \n");
-    printf("ID\tIzdavac\tDrzava");
+    printf("ID\tIzdavac\tDrzava\n");
     while ((row = mysql_fetch_row(res)) != NULL) {
         printf("%s %s %s\n", row[0], row[1], row[2]);
         i++;
@@ -220,7 +221,8 @@ void dodajKnjigu() {
         printf("Unesite id izdavaca\n");
         scanf("%d", &izdavacId);
     }
-    sprintf(zahtjev, "INSERT INTO knjiga VALUES (%lld, '%s', %d, %d, %d, %d)", isbn, naslov, godina, brojStranica, autorId, izdavacId);
+    sprintf(zahtjev, "INSERT INTO knjiga VALUES (%s, '%s', %d, %d, %d, %d)", isbn, naslov, godina, brojStranica, autorId, izdavacId);
+    printf("%s\n", zahtjev);
     if (mysql_query(conn, zahtjev)) {
         greska(conn);
     }
